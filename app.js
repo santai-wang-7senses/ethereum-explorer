@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+var itemJSON = require("./contracts/Item.sol/Item.json");
 
 var app = express();
 
@@ -46,7 +47,8 @@ app.get('/address/:address/', function (req, res, next) {
   var address = req.params['address'];
   res.render('address', {
     title: 'Address',
-    address: address
+    address: address,
+    itemJSON: JSON.stringify(itemJSON)
   });
 });
 

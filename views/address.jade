@@ -8,29 +8,49 @@ block contents
     table.table.table-striped.table-bordered._table-sm.w-100
       thead
         tr
-          th.w-25 Balance
-          td
-            i.fas.fa-lg.fa-spinner.fa-pulse(v-if="balance===null") 
-            {{ balance }} {{ balance_eth }}
-        tr
-          th Balance(USD)
-          td 
-            i.fas.fa-lg.fa-spinner.fa-pulse(v-if="balance_usd===null") 
-            {{ balance_usd }}
-        tr
-          th Storage
-          td 
-            i.fas.fa-lg.fa-spinner.fa-pulse(v-if="storage===null") 
-            {{ storage }}
-        tr
           th Transaction Count
           td 
             i.fas.fa-lg.fa-spinner.fa-pulse(v-if="transactionCount===null") 
             {{ transactionCount }}
         tr(v-if="isContract")
-          th Code
+          th Data
           td
-            textarea(disabled, readonly, rows="25") {{ code }}
+            //- textarea(disabled, readonly, rows="25") {{ code }}
+            table.table.table-striped.table-bordered._table-sm.w-100
+              thead
+                tr
+                  th SHID
+                    td {{ shid }}
+                tr
+                  th 產出品項
+                    td {{ title }}
+                //- tr
+                //-   th 產出作業
+                //-     td {{ procedure }}
+                tr
+                  th 產出組織
+                    td {{ organization }}
+                tr
+                  th 產出日期
+                    td {{ producedDate }}
+                tr
+                  th 有效日期
+                    td {{ expirationDate }}
+                tr
+                  th 目前數量
+                    td {{ restNumber }}
+                tr
+                  th 產出數量
+                    td {{ producedNumber }}
+                tr
+                  th 原料來源
+                    td {{ sourceList }}
+                tr
+                  th 作為原料
+                    td {{ destinationList }}
+            //-     tr 
+            //-     each t in #{transactions}
+            //-       td=t
   
   script.
 
@@ -38,12 +58,22 @@ block contents
       el: '#app',
       data: { 
         address: '#{address}',
+        itemJSON: '#{itemJSON}',
         balance: null,
         balance_eth: null,
         balance_usd: null,
         storage: null,
         code: null,
         transactionCount: null,
+        shid: null,
+        title: null,
+        organization: null,
+        producedDate: null,
+        expirationDate: null,
+        restNumber: null,
+        producedNumber: null,
+        sourceList: null,
+        destinationList: null
       },
       computed: {
         isContract: function() {
@@ -107,8 +137,9 @@ block contents
       var self = app || this;
       address = address || self.address;
 
-      self.balance = await getBalance(address);
-      self.balance_eth = '(' + web3.fromWei(app.balance, 'ether').toString(10) + ' ETH)';
+      //- self.balance = await getBalance(address);
+      //- self.balance_eth = '(' + web3.fromWei(app.balance, 'ether').toString(10) + ' ETH)';
+      self.balance_eth = "CCC"
 
       self.storage = await getStorageAt(address);
       self.code = await getCode(address);
@@ -116,6 +147,33 @@ block contents
       //- console.log('code: ', JSON.stringify(self.code, '', 2));
 
       self.transactionCount = await getTransactionCount(address);
+      const itemjson = JSON.parse(self.itemJSON.replace(/&quot;/g,'"'))
+      const itemFactory = new ethers.ContractFactory(
+        itemjson.abi,
+        itemjson.bytecode,
+      );
+      const signer = new ethers.Wallet("0x17bcf85e639fa3e467e99bef103e1401a12989bbee7d787409cae16d24191e21", GEtherProvider);
+      const item = await itemFactory.connect(signer).attach(address)
+      const itemData = await item.itemData();
+      const quantity = await item.quantity();
+      const sourceList = await item.getSourceList();
+      const destinationList = await item.getDestinationList();
+      console.log(sourceList)
+      self.shid = itemData.shid
+      self.title = itemData.name
+      self.organization = itemData.organization
+      console.log(parseInt(itemData.producedDate.toString(), 10))
+      self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
+      self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
+      self.restNumber = quantity.restNumber;
+      self.producedNumber = quantity.producedNumber;
+      self.sourceList = sourceList.map((ele) => ele.usedObject).toString();
+      self.destinationList = destinationList.map((ele) => ele.usedObject).toString();
 
-      self.balance_usd = await getETHUSD(web3.fromWei(app.balance, 'ether'));
+      //- alert("AAA")
+      //- self.organization ='(' + web3.fromWei(app.balance, 'ether').toString(10) + ' ETH)';
+      //- console.log(itemABI)
+      //- const item = new web3.eth.Contract(itemABI, address)
+      //- const itemData = await item.itemData().call();
+      //- console.log(itemData)
     }

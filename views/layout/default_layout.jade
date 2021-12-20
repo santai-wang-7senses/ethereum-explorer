@@ -11,11 +11,13 @@ html(lang="en")
     
     script(src="https://code.jquery.com/jquery-3.3.1.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=", crossorigin="anonymous")
     script(src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@0.20.6/dist/web3.min.js")
+    script(src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js", type="application/javascript")
     script(src="https://cdn.jsdelivr.net/npm/vue")
 
     script.
       var web3;
       web3 = new Web3(new Web3.providers.HttpProvider("#{env.ETHEREUM_RPC_URL}"));
+      var GEtherProvider = new ethers.providers.JsonRpcProvider("#{env.ETHEREUM_RPC_URL}");
 
       
   body
