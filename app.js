@@ -4,6 +4,7 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var itemJSON = require("./contracts/Item.sol/Item.json");
+var productJSON = require("./contracts/Product.sol/Product.json");
 
 var app = express();
 
@@ -48,7 +49,9 @@ app.get('/address/:address/', function (req, res, next) {
   res.render('address', {
     title: 'Address',
     address: address,
-    itemJSON: JSON.stringify(itemJSON)
+    itemJSON: JSON.stringify(itemJSON),
+    productJSON: JSON.stringify(productJSON),
+    sourceList: "HAHAHA"
   });
 });
 

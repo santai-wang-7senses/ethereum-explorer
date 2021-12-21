@@ -12,7 +12,7 @@ block contents
           td 
             i.fas.fa-lg.fa-spinner.fa-pulse(v-if="transactionCount===null") 
             {{ transactionCount }}
-        tr(v-if="isContract")
+        tr(v-if="isContract&&isItem")
           th Data
           td
             //- textarea(disabled, readonly, rows="25") {{ code }}
@@ -24,9 +24,9 @@ block contents
                 tr
                   th 產出品項
                     td {{ title }}
-                //- tr
-                //-   th 產出作業
-                //-     td {{ procedure }}
+                tr
+                  th 產出作業
+                    td {{ procedureList }}
                 tr
                   th 產出組織
                     td {{ organization }}
@@ -44,21 +44,22 @@ block contents
                     td {{ producedNumber }}
                 tr
                   th 原料來源
-                    td {{ sourceList }}
+                    td
+                      {{ sourceList }}
                 tr
                   th 作為原料
                     td {{ destinationList }}
-            //-     tr 
-            //-     each t in #{transactions}
-            //-       td=t
   
   script.
 
     var app = new Vue({
       el: '#app',
-      data: { 
+      data: {
+        isItem: false,
+        isProduct: false,
         address: '#{address}',
         itemJSON: '#{itemJSON}',
+        productJSON: '#{productJSON}',
         balance: null,
         balance_eth: null,
         balance_usd: null,
@@ -73,7 +74,8 @@ block contents
         restNumber: null,
         producedNumber: null,
         sourceList: null,
-        destinationList: null
+        destinationList: null,
+        procedureList: null
       },
       computed: {
         isContract: function() {
@@ -134,41 +136,44 @@ block contents
     }
 
     async function getAddressInfo(address) {
-      var self = app || this;
+      let self = app || this;
       address = address || self.address;
-
-      //- self.balance = await getBalance(address);
-      //- self.balance_eth = '(' + web3.fromWei(app.balance, 'ether').toString(10) + ' ETH)';
-      self.balance_eth = "CCC"
-
-      self.storage = await getStorageAt(address);
+      //- self.storage = await getStorageAt(address);
       self.code = await getCode(address);
-      //- if( self.code.length > 3) self.isContract
-      //- console.log('code: ', JSON.stringify(self.code, '', 2));
-
       self.transactionCount = await getTransactionCount(address);
       const itemjson = JSON.parse(self.itemJSON.replace(/&quot;/g,'"'))
-      const itemFactory = new ethers.ContractFactory(
-        itemjson.abi,
-        itemjson.bytecode,
-      );
-      const signer = new ethers.Wallet("0x17bcf85e639fa3e467e99bef103e1401a12989bbee7d787409cae16d24191e21", GEtherProvider);
-      const item = await itemFactory.connect(signer).attach(address)
-      const itemData = await item.itemData();
-      const quantity = await item.quantity();
-      const sourceList = await item.getSourceList();
-      const destinationList = await item.getDestinationList();
-      console.log(sourceList)
-      self.shid = itemData.shid
-      self.title = itemData.name
-      self.organization = itemData.organization
-      console.log(parseInt(itemData.producedDate.toString(), 10))
-      self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
-      self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
-      self.restNumber = quantity.restNumber;
-      self.producedNumber = quantity.producedNumber;
-      self.sourceList = sourceList.map((ele) => ele.usedObject).toString();
-      self.destinationList = destinationList.map((ele) => ele.usedObject).toString();
+      const productjson = JSON.parse(self.productJSON.replace(/&quot;/g,'"'))
+      //- console.log(self.code)
+      //- console.log(itemjson.bytecode)
+      //- console.log(self.code === itemjson.deployedBytecode)
+      if (self.code === itemjson.deployedBytecode) {
+        self.isItem = true;
+        const itemFactory = new ethers.ContractFactory(
+          itemjson.abi,
+          self.code,
+        );
+        const signer = new ethers.Wallet("0x17bcf85e639fa3e467e99bef103e1401a12989bbee7d787409cae16d24191e21", GEtherProvider);
+        const item = await itemFactory.connect(signer).attach(address)
+        const itemData = await item.itemData();
+        const quantity = await item.quantity();
+        const sourceList = await item.getSourceList();
+        //- const sourceList = "AAAAA"
+        const destinationList = await item.getDestinationList();
+        const procedureList = await item.getProcedureList();
+        console.log(sourceList)
+        self.shid = itemData.shid
+        self.title = itemData.name
+        self.organization = itemData.organization
+        //- console.log(parseInt(itemData.producedDate.toString(), 10))
+        self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
+        self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
+        self.restNumber = quantity.restNumber;
+        self.producedNumber = quantity.producedNumber;
+        self.sourceList = "[" + sourceList.map((ele) => ele.usedObject).toString() + "]";
+        self.destinationList = "[" + destinationList.map((ele) => ele.usedObject).toString() + "]";
+        //- console.log(procedureList)
+        self.procedureList = "[" + procedureList.toString() + "]"
+      }
 
       //- alert("AAA")
       //- self.organization ='(' + web3.fromWei(app.balance, 'ether').toString(10) + ' ETH)';
