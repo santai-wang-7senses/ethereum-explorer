@@ -9,7 +9,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "id",
+              "name": "shid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "phid",
               "type": "uint256"
             },
             {
@@ -26,6 +31,11 @@
               "internalType": "bool",
               "name": "isDeleted",
               "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
             }
           ],
           "internalType": "struct TraceableObject.TraceData[]",
@@ -44,7 +54,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "id",
+              "name": "shid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "phid",
               "type": "uint256"
             },
             {
@@ -61,6 +76,11 @@
               "internalType": "bool",
               "name": "isDeleted",
               "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
             }
           ],
           "internalType": "struct TraceableObject.TraceData[]",
@@ -124,7 +144,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "id",
+          "name": "shid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "phid",
           "type": "uint256"
         },
         {
@@ -141,6 +166,11 @@
           "internalType": "bool",
           "name": "isDeleted",
           "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -167,7 +197,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "id",
+              "name": "shid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "phid",
               "type": "uint256"
             },
             {
@@ -184,6 +219,11 @@
               "internalType": "bool",
               "name": "isDeleted",
               "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
             }
           ],
           "internalType": "struct TraceableObject.TraceData[]",
@@ -202,7 +242,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "id",
+              "name": "shid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "phid",
               "type": "uint256"
             },
             {
@@ -219,6 +264,11 @@
               "internalType": "bool",
               "name": "isDeleted",
               "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
             }
           ],
           "internalType": "struct TraceableObject.TraceData[]",
@@ -301,7 +351,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "id",
+          "name": "shid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "phid",
           "type": "uint256"
         },
         {
@@ -318,6 +373,11 @@
           "internalType": "bool",
           "name": "isDeleted",
           "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
         }
       ],
       "stateMutability": "view",

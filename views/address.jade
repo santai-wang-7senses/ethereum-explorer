@@ -169,10 +169,55 @@ block contents
         self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
         self.restNumber = quantity.restNumber;
         self.producedNumber = quantity.producedNumber;
-        self.sourceList = "[" + sourceList.map((ele) => ele.usedObject).toString() + "]";
-        self.destinationList = "[" + destinationList.map((ele) => ele.usedObject).toString() + "]";
-        //- console.log(procedureList)
-        self.procedureList = "[" + procedureList.toString() + "]"
+        console.log(JSON.stringify(sourceList.map((ele) => { 
+          let obj =  { 
+            name: ele.name,
+            usedObject: ele.usedObject,
+            usedNumber: ele.usedNumber.toString()
+          }
+          if (ele.shid.isZero()) {
+            obj.phid = ele.phid.toString()
+          } else {
+            obj.shid = ele.shid.toString()
+          }
+          return obj
+        }), null, 4))
+        self.sourceList = JSON.stringify(sourceList.map((ele) => { 
+          let obj =  { 
+            name: ele.name,
+            usedObject: ele.usedObject,
+            usedNumber: ele.usedNumber.toString()
+          }
+          if (ele.shid.isZero()) {
+            obj.phid = ele.phid.toString()
+          } else {
+            obj.shid = ele.shid.toString()
+          }
+          return obj
+        }), null, 4);
+        self.destinationList = JSON.stringify(destinationList.map((ele) => { 
+          let obj =  { 
+            name: ele.name,
+            usedObject: ele.usedObject,
+            usedNumber: ele.usedNumber.toString()
+          }
+          if (ele.shid.isZero()) {
+            obj.phid = ele.phid.toString()
+          } else {
+            obj.shid = ele.shid.toString()
+          }
+          return obj
+        }), null, 4);
+        self.procedureList = JSON.stringify(procedureList.map((ele) => {
+          return {
+            procedure: ele.procedure,
+            name: ele.name,
+            startTime: new Date(parseInt(ele.startTime.toString(), 10) * 1000),
+            endTime: new Date(parseInt(ele.endTime.toString(), 10) * 1000),
+            mediaList: ele.mediaList,
+            sensorDataURLs: ele.sensorDataURLs
+          }
+        }), null, 4)
       }
 
       //- alert("AAA")
