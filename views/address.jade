@@ -172,8 +172,8 @@ block contents
         //- console.log(parseInt(itemData.producedDate.toString(), 10))
         self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
         self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
-        self.restNumber = quantity.restNumber;
-        self.producedNumber = quantity.producedNumber;
+        self.restNumber = quantity.restNumber.toString() + ` ${quantity.unit}`;
+        self.producedNumber = quantity.producedNumber.toString() + ` ${quantity.unit}`;
         console.log(JSON.stringify(sourceList.map((ele) => { 
           let obj =  { 
             name: ele.name,
