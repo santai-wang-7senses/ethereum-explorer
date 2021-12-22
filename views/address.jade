@@ -29,6 +29,9 @@ block contents
                     td {{ procedureList }}
                 tr
                   th 產出組織
+                    td {{ organizationName }}
+                tr
+                  th 組織地址
                     td {{ organization }}
                 tr
                   th 產出日期
@@ -69,6 +72,7 @@ block contents
         shid: null,
         title: null,
         organization: null,
+        organizationName: null,
         producedDate: null,
         expirationDate: null,
         restNumber: null,
@@ -164,6 +168,7 @@ block contents
         self.shid = itemData.shid
         self.title = itemData.name
         self.organization = itemData.organization
+        self.organizationName = itemData.organizationName
         //- console.log(parseInt(itemData.producedDate.toString(), 10))
         self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
         self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
