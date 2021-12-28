@@ -52,6 +52,49 @@ block contents
                 tr
                   th 作為原料
                     td {{ destinationList }}
+        tr(v-if="isContract&&isProduct")
+          th Data
+          td
+            //- textarea(disabled, readonly, rows="25") {{ code }}
+            table.table.table-striped.table-bordered._table-sm.w-100
+              thead
+                tr
+                  th PHID
+                    td {{ phid }}
+                tr
+                  th 產品名稱
+                    td {{ title }}
+                tr
+                  th 產出組織
+                    td {{ organizationName }}
+                tr
+                  th 組織地址
+                    td {{ organization }}
+                tr
+                  th 擁有者
+                    td {{ ownerName }}
+                tr
+                  th 擁有者地址
+                    td {{ owner }}
+                tr
+                  th 交易日期
+                    td {{ transactionDate }}
+                tr
+                  th 有效日期
+                    td {{ expirationDate }}
+                tr
+                  th 目前數量
+                    td {{ restNumber }}
+                tr
+                  th 產出數量
+                    td {{ producedNumber }}
+                tr
+                  th 原料來源
+                    td
+                      {{ sourceList }}
+                tr
+                  th 作為原料
+                    td {{ destinationList }}
   
   script.
 
@@ -70,10 +113,14 @@ block contents
         code: null,
         transactionCount: null,
         shid: null,
+        phid: null,
         title: null,
         organization: null,
         organizationName: null,
+        owner: null,
+        ownerName: null,
         producedDate: null,
+        transactionDate: null,
         expirationDate: null,
         restNumber: null,
         producedNumber: null,
@@ -164,11 +211,12 @@ block contents
         //- const sourceList = "AAAAA"
         const destinationList = await item.getDestinationList();
         const procedureList = await item.getProcedureList();
-        console.log(sourceList)
         self.shid = itemData.shid
         self.title = itemData.name
         self.organization = itemData.organization
         self.organizationName = itemData.organizationName
+        self.owner = itemData.owner
+        self.ownerName = itemData.ownerName
         //- console.log(parseInt(itemData.producedDate.toString(), 10))
         self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
         self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
@@ -224,11 +272,51 @@ block contents
           }
         }), null, 4)
       }
-
-      //- alert("AAA")
-      //- self.organization ='(' + web3.fromWei(app.balance, 'ether').toString(10) + ' ETH)';
-      //- console.log(itemABI)
-      //- const item = new web3.eth.Contract(itemABI, address)
-      //- const itemData = await item.itemData().call();
-      //- console.log(itemData)
+      if (self.code === productjson.deployedBytecode) {
+        self.isProduct = true;
+        const productFactory = new ethers.ContractFactory(
+          productjson.abi,
+          self.code,
+        );
+        const signer = new ethers.Wallet("0x17bcf85e639fa3e467e99bef103e1401a12989bbee7d787409cae16d24191e21", GEtherProvider);
+        const product = await productFactory.connect(signer).attach(address)
+        const productData = await product.productData();
+        const quantity = await product.quantity();
+        const sourceList = await product.getSourceList();
+        const destinationList = await product.getDestinationList();
+        self.phid = productData.phid
+        self.title = productData.name
+        self.organization = productData.organization
+        self.organizationName = productData.organizationName
+        self.transactionDate = new Date(parseInt(productData.transactionDate.toString(), 10) * 1000)
+        self.expirationDate = new Date(parseInt(productData.expirationDate.toString(), 10) * 1000)
+        self.restNumber = quantity.restNumber.toString() + ` ${quantity.unit}`;
+        self.producedNumber = quantity.producedNumber.toString() + ` ${quantity.unit}`;
+        self.sourceList = JSON.stringify(sourceList.map((ele) => { 
+          let obj =  { 
+            name: ele.name,
+            usedObject: ele.usedObject,
+            usedNumber: ele.usedNumber.toString()
+          }
+          if (ele.shid.isZero()) {
+            obj.phid = ele.phid.toString()
+          } else {
+            obj.shid = ele.shid.toString()
+          }
+          return obj
+        }), null, 4);
+        self.destinationList = JSON.stringify(destinationList.map((ele) => { 
+          let obj =  { 
+            name: ele.name,
+            usedObject: ele.usedObject,
+            usedNumber: ele.usedNumber.toString()
+          }
+          if (ele.shid.isZero()) {
+            obj.phid = ele.phid.toString()
+          } else {
+            obj.shid = ele.shid.toString()
+          }
+          return obj
+        }), null, 4);
+      }
     }
