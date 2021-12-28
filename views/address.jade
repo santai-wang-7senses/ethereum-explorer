@@ -215,8 +215,6 @@ block contents
         self.title = itemData.name
         self.organization = itemData.organization
         self.organizationName = itemData.organizationName
-        self.owner = itemData.owner
-        self.ownerName = itemData.ownerName
         //- console.log(parseInt(itemData.producedDate.toString(), 10))
         self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
         self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
@@ -288,6 +286,8 @@ block contents
         self.title = productData.name
         self.organization = productData.organization
         self.organizationName = productData.organizationName
+        self.owner = itemData.owner
+        self.ownerName = itemData.ownerName
         self.transactionDate = new Date(parseInt(productData.transactionDate.toString(), 10) * 1000)
         self.expirationDate = new Date(parseInt(productData.expirationDate.toString(), 10) * 1000)
         self.restNumber = quantity.restNumber.toString() + ` ${quantity.unit}`;
