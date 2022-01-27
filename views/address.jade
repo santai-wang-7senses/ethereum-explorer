@@ -211,15 +211,17 @@ block contents
         //- const sourceList = "AAAAA"
         const destinationList = await item.getDestinationList();
         const procedureList = await item.getProcedureList();
+        const divisor = parseInt((await item.getDivisor()).toString(), 10);
+        console.log(divisor)
         self.shid = itemData.shid
         self.title = itemData.name
         self.organization = itemData.organization
         self.organizationName = itemData.organizationName
         //- console.log(parseInt(itemData.producedDate.toString(), 10))
         self.producedDate = new Date(parseInt(itemData.producedDate.toString(), 10) * 1000)
-        self.expirationDate = new Date(parseInt(itemData.expirationDate.toString(), 10) * 1000)
-        self.restNumber = quantity.restNumber.toString() + ` ${quantity.unit}`;
-        self.producedNumber = quantity.producedNumber.toString() + ` ${quantity.unit}`;
+        self.expirationDate = processExpirationDate(itemData.expirationDate)
+        self.restNumber = processNumberString(quantity.restNumber, divisor) + ` ${quantity.unit}`;
+        self.producedNumber = processNumberString(quantity.producedNumber, divisor) + ` ${quantity.unit}`;
         console.log(JSON.stringify(sourceList.map((ele) => { 
           let obj =  { 
             name: ele.name,
@@ -282,6 +284,7 @@ block contents
         const quantity = await product.quantity();
         const sourceList = await product.getSourceList();
         const destinationList = await product.getDestinationList();
+        const divisor = parseInt((await product.getDivisor()).toString(), 10);
         self.phid = productData.phid
         self.title = productData.name
         self.organization = productData.organization
@@ -289,9 +292,9 @@ block contents
         self.owner = productData.owner
         self.ownerName = productData.ownerName
         self.transactionDate = new Date(parseInt(productData.transactionDate.toString(), 10) * 1000)
-        self.expirationDate = new Date(parseInt(productData.expirationDate.toString(), 10) * 1000)
-        self.restNumber = quantity.restNumber.toString() + ` ${quantity.unit}`;
-        self.producedNumber = quantity.producedNumber.toString() + ` ${quantity.unit}`;
+        self.expirationDate = processExpirationDate(productData.expirationDate)
+        self.restNumber = processNumberString(quantity.restNumber, divisor) + ` ${quantity.unit}`;
+        self.producedNumber = processNumberString(quantity.producedNumber, divisor) + ` ${quantity.unit}`;
         self.sourceList = JSON.stringify(sourceList.map((ele) => { 
           let obj =  { 
             name: ele.name,
@@ -319,4 +322,12 @@ block contents
           return obj
         }), null, 4);
       }
+    }
+
+    function processNumberString(number, divisor) {
+      return (parseInt(number.toString(), 10) / divisor).toString()
+    }
+
+    function processExpirationDate(expirationDate) {
+      return parseInt(expirationDate.toString(), 10) !== 0 ? new Date(parseInt(expirationDate.toString(), 10) * 1000) : "有效期限未設定"
     }
