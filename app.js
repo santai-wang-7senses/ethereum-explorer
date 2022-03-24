@@ -11,6 +11,8 @@ var app = express();
 // set env vars down to jade
 process.env.ETHEREUM_RPC_URL = process.env.ETHEREUM_RPC_URL || "http://127.0.0.1:8545"
 app.locals.env = process.env;
+const { MongoClient } = require('mongodb');
+const client = new MongoClient(`mongodb://santai:1234@localhost:27017/santaiDB`);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,8 +46,32 @@ app.get('/tx/:hash/', function (req, res, next) {
   });
 });
 
-app.get('/address/:address/', function (req, res, next) {
+app.get('/address/:address/', async function (req, res, next) {
   var address = req.params['address'];
+  res.render('address', {
+    title: 'Address',
+    address: address,
+    itemJSON: JSON.stringify(itemJSON),
+    productJSON: JSON.stringify(productJSON),
+    sourceList: "HAHAHA"
+  });
+});
+
+app.get('/shid/:shid/', async function (req, res, next) {
+  const shid = req.params['shid'];
+  const address = await getItemData(shid)
+  res.render('address', {
+    title: 'Address',
+    address: address,
+    itemJSON: JSON.stringify(itemJSON),
+    productJSON: JSON.stringify(productJSON),
+    sourceList: "HAHAHA"
+  });
+});
+
+app.get('/phid/:phid/', async function (req, res, next) {
+  const phid = req.params['phid'];
+  const address = await getProductData(phid)
   res.render('address', {
     title: 'Address',
     address: address,
@@ -81,5 +107,17 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+async function getItemData(shid) {
+  await client.connect();
+  const data = await client.db().collection('items').find({shid: parseInt(shid, 10)}).toArray()
+  return data.length === 0 ? '' : data[0].address
+}
+
+async function getProductData(phid) {
+  await client.connect();
+  const data = await client.db().collection('products').find({phid: parseInt(phid, 10)}).toArray()
+  return data.length === 0 ? '' : data[0].address
+}
 
 module.exports = app;

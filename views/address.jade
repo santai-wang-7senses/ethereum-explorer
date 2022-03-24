@@ -166,12 +166,16 @@ block contents
     }
 
     function getTransactionCount(address) {
-      return new Promise((res, rej) => {
-        web3.eth.getTransactionCount(address, (error, result) => {
-          if(error) rej(error);
-          else res(result);
+      if (address !== "") {
+        return new Promise((res, rej) => {
+          web3.eth.getTransactionCount(address, (error, result) => {
+            if(error) rej(error);
+            else res(result);
+          });
         });
-      });
+      } else {
+        return 0;
+      }
     }
 
 
@@ -212,7 +216,6 @@ block contents
         const destinationList = await item.getDestinationList();
         const procedureList = await item.getProcedureList();
         const divisor = parseInt((await item.getDivisor()).toString(), 10);
-        console.log(divisor)
         self.shid = itemData.shid
         self.title = itemData.name
         self.organization = itemData.organization
