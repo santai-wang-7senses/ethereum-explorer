@@ -155,6 +155,7 @@ block contents
     function getBlockNumber() {
       return new Promise((res, rej) => {
         web3.eth.getBlockNumber((error, result) => {
+          console.log(result)
           if(error) rej(error);
           else res(result);
         });
@@ -220,6 +221,7 @@ block contents
       //- getGasPrice().then(r =>  self.gasPrice = r.toString(10) + ' (' +  web3.fromWei(r, 'ether').toString(10) + ' ETH)');
       getGasPrice().then(r =>  self.gasPrice = r.toString(10) + ' (' +  web3.fromWei(r, 'gwei').toString(10) + ' Gwei)');
 
+      console.log("SDFDSFSDFDSDSFDSFFSD")
       var blockNumber = await getBlockNumber();
       self.blockNumber = blockNumber;
 

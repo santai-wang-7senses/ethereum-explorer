@@ -191,8 +191,10 @@ block contents
     }
 
     async function getAddressInfo(address) {
+      console.log("AAA");
       let self = app || this;
       address = address || self.address;
+      console.log(address);
       //- self.storage = await getStorageAt(address);
       self.code = await getCode(address);
       self.transactionCount = await getTransactionCount(address);
@@ -209,7 +211,9 @@ block contents
         );
         const signer = new ethers.Wallet("0x17bcf85e639fa3e467e99bef103e1401a12989bbee7d787409cae16d24191e21", GEtherProvider);
         const item = await itemFactory.connect(signer).attach(address)
+        console.log(address);
         const itemData = await item.itemData();
+        console.log(itemData);
         const quantity = await item.quantity();
         const sourceList = await item.getSourceList();
         //- const sourceList = "AAAAA"
@@ -294,7 +298,7 @@ block contents
         self.organizationName = productData.organizationName
         self.owner = productData.owner
         self.ownerName = productData.ownerName
-        self.transactionDate = new Date(parseInt(productData.transactionDate.toString(), 10) * 1000)
+        self.transactionDate = processTransactionDate(productData.transactionDate)
         self.expirationDate = processExpirationDate(productData.expirationDate)
         self.restNumber = processNumberString(quantity.restNumber, divisor) + ` ${quantity.unit}`;
         self.producedNumber = processNumberString(quantity.producedNumber, divisor) + ` ${quantity.unit}`;
@@ -333,4 +337,8 @@ block contents
 
     function processExpirationDate(expirationDate) {
       return parseInt(expirationDate.toString(), 10) !== 0 ? new Date(parseInt(expirationDate.toString(), 10) * 1000) : "有效期限未設定"
+    }
+
+    function processTransactionDate(transactionDate) {
+      return parseInt(transactionDate.toString(), 10) !== 0 ? new Date(parseInt(transactionDate.toString(), 10) * 1000) : "尚未交易"
     }
